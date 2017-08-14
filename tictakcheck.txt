@@ -1,0 +1,86 @@
+-- TicTacChec
+
+-- Use this function to perform your initial setup
+function setup()
+    print("Tic Tac Chec")
+    print("all pieces placed and movable, but")
+    print(".. they stick together")
+    imgTab={}   -- image table
+    table.insert(imgTab,readImage("Dropbox:45redBishop"))
+    table.insert(imgTab,readImage("Dropbox:45redKnight"))
+    table.insert(imgTab,readImage("Dropbox:45redRook"))
+    table.insert(imgTab,readImage("Dropbox:45redPawn"))
+    table.insert(imgTab,readImage("Dropbox:45greenBishop"))
+    table.insert(imgTab,readImage("Dropbox:45greenKnight"))
+    table.insert(imgTab,readImage("Dropbox:45greenRook"))
+    table.insert(imgTab,readImage("Dropbox:45greenPawn"))
+
+    locTab={}   -- location table
+    table.insert(locTab,vec2(math.random(50,WIDTH-50),math.random(50,HEIGHT-50)))
+    table.insert(locTab,vec2(math.random(50,WIDTH-50),math.random(50,HEIGHT-50)))
+    table.insert(locTab,vec2(math.random(50,WIDTH-50),math.random(50,HEIGHT-50)))
+    table.insert(locTab,vec2(math.random(50,WIDTH-50),math.random(50,HEIGHT-50)))
+    table.insert(locTab,vec2(math.random(50,WIDTH-50),math.random(50,HEIGHT-50)))
+    table.insert(locTab,vec2(math.random(50,WIDTH-50),math.random(50,HEIGHT-50)))
+    table.insert(locTab,vec2(math.random(50,WIDTH-50),math.random(50,HEIGHT-50)))
+    table.insert(locTab,vec2(math.random(50,WIDTH-50),math.random(50,HEIGHT-50)))
+end
+
+-- This function gets called once every frame
+
+function draw()
+   -- This sets a dark background color 
+    background(40, 40, 50)
+    -- This sets the line thickness
+    strokeWidth(5)
+    smooth()
+    fill(152, 140, 140, 255)
+    roundRect(40,20,WIDTH-80,WIDTH-80,13)
+    -- Do your drawing here    
+
+    fill(255)
+    sz=(WIDTH-80)/4
+    for x=0,3 do
+        for y=0,3 do
+            roundRect(x*sz+40,y*sz+20,sz,sz,13)
+        end
+    end
+    for z=1,#imgTab do
+        sprite(imgTab[z],locTab[z].x,locTab[z].y)   -- draw sprites
+    end
+end
+
+function roundRect(x, y, w, h, cr)
+    pushStyle()
+    insetPos = vec2(x+cr,y+cr)
+    insetSize = vec2(w-2*cr,h-2*cr)
+    rectMode(CORNER)
+    rect(insetPos.x,insetPos.y,insetSize.x,insetSize.y)
+    r,g,b,a = fill()
+    stroke(r,g,b,a)
+    if r > 0 then
+        smooth()
+        lineCapMode(ROUND)
+        strokeWidth(cr*2)
+        line(insetPos.x, insetPos.y, 
+            insetPos.x + insetSize.x, insetPos.y)
+        line(insetPos.x, insetPos.y,insetPos.x, 
+            insetPos.y + insetSize.y)
+        line(insetPos.x, insetPos.y + insetSize.y,
+            insetPos.x + insetSize.x, insetPos.y + insetSize.y)
+        line(insetPos.x + insetSize.x, insetPos.y,
+            insetPos.x + insetSize.x, insetPos.y + insetSize.y)            
+     end
+    popStyle()
+ end
+
+function touched(t)
+    if t.state==BEGAN or t.state==MOVING then
+        for a,b in pairs(locTab) do -- which sprite is touched
+            if t.x>b.x-30 and t.x<b.x+30 and t.y>b.y-30 and t.y<b.y+30 then
+                b.x=t.x
+                b.y=t.y
+            end
+        end
+    end
+end
